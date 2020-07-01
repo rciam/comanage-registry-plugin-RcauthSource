@@ -6,6 +6,8 @@ class RcauthSource extends AppModel {
 
   public $uses = array("Cert");
 
+  public $actsAs = array('Changelog' => array('priority' => 5));
+
   // Document foreign keys
   public $cmPluginHasMany = array();
 

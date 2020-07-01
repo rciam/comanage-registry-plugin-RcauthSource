@@ -29,18 +29,17 @@ App::uses("OrgIdentitySourceBackend", "Model");
 
 class RcauthSourceBackend extends OrgIdentitySourceBackend {
   public $name = "RcauthSourceBackend";
-  private $mpOA2Server = null;
 
-  // Constructor
-  function __construct(){
-    parent::__construct();
-  }
+  // XXX depricated in Cakephp 3.x version and beyond
+  public $useTable = false;
+
+  protected $mpOA2Server = null;
 
   /**
    * @param $mpOA2Url   the Url of the Masterportal Oauth2 server of the RCAUTH CA
    */
   public function getMPOPA2endpoints($mpOA2Url){
-    if($this->mpOA2Server == null) {
+    if($this->mpOA2Server === null) {
       $this->mpOA2Server = new mpCfgUrl($mpOA2Url);
     }
   }
@@ -55,8 +54,9 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
 
   /**
    * Generate an RCAUTH callback URL.  *
-   * @since  COmanage Registry v3.1.0
+   * @param null $oisid
    * @return Array URL, in Cake array format
+   * @since  COmanage Registry v3.1.0
    */
   public function callbackUrl($oisid=null) {
     /*
@@ -95,7 +95,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     );
 
 
-    $response = $this->do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
+    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
     if(!empty($info['http_code'])){
       // The request returned successfully. Dump data into an object, check their validity and return
       // data object from json decode
@@ -115,53 +115,6 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
       throw new RuntimeException(_txt('er.rcauthsource.code',$error));
     }
   }
-
-  // Wrapper for curl
-
-  /**
-   * @param $url      The URL used to address the request
-   * @param $fields   List of query parameters in a key=>value array format
-   * @return array
-   */
-  protected function do_curl($url, $fields, &$error, &$info)  {
-    //url-ify the data for the POST
-    $fields_string="";
-    foreach($fields as $key=>$value) {
-      $fields_string .= $key.'='.$value.'&';
-    }
-    rtrim($fields_string, '&');
-    // open connection
-    $ch = curl_init();
-
-    // set the url, number of POST vars, POST data
-    // Content-type: application/x-www-form-urlencoded => is the default approach for post requests
-    curl_setopt($ch,CURLOPT_URL, $url);
-    curl_setopt($ch,CURLOPT_POST, count($fields));
-    curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-    curl_setopt($ch,CURLOPT_HEADER, false);
-    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch,CURLOPT_FOLLOWLOCATION, false);
-    curl_setopt($ch,CURLOPT_VERBOSE, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 3000);
-
-    // execute post
-    $response = curl_exec($ch);
-    $status_code = "";
-    $error = "";
-    if (empty($response)) {
-      // probably connection error
-      $error = curl_error($ch);
-    }
-
-    $info = curl_getinfo($ch);
-
-    // close connection
-    curl_close($ch);
-    // return success
-    return $response;
-  }
-
-
 
   /**
    * Generate the set of attributes for the IdentitySource that can be used to map
@@ -223,14 +176,16 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     //		   "family_name":"Doe",
     //		   "email":"jdoe@mail.com"
     //		}
-    $response = $this->do_curl($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
+    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
 
-    if($info['http_code'] == 404) {
+
+    if( (int)$info['http_code'] >= 400
+        && (int)$info['http_code'] < 500 ) {
       // Most likely retrieving an invalid rcauth
       throw new InvalidArgumentException(_txt('er.rcauthsource.search', array($info['http_code'])));
     }
 
-    if($info['http_code'] != 200) {
+    if((int)$info['http_code'] !== 200) {
       // This is probably an RDF blob, which is slightly annoying to parse.
       // Rather than do it properly since we don't parse RDF anywhere else,
       // we return a generic error.
@@ -240,6 +195,36 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   }
 
 
+  /**
+   * Construct the route for the access token request to RCAuth
+   *
+   * @param $id
+   * @param $oiscfg_id
+   * @return string route
+   * @since  COmanage Registry v3.1.0
+   */
+  public function constructAccessTokenRequest($id, $oiscfg_id) {
+    // Construct the callback route
+    $redirectUri = Router::url($this->callbackUrl(), array('full' => true));
+    // Construct the scope
+    $scope = "";
+    foreach ($this->getMpOA2Server()->getScopesSupported() as $key => $value) {
+      $scope .= $value . " ";
+    }
+    $scope = trim($scope);
+    // Construct the url
+    $url = $this->getMpOA2Server()->getAuthorizationEndpoint() . "?";
+    $url .= "response_type=code";
+    $url .= "&scope=" . urlencode($scope);
+    $url .= "&client_id=" . $this->pluginCfg['RcauthSource']['clientid'];
+    $url .= "&state=" . base64_encode("{\"pass\" : {$id}, \"named\" : {$oiscfg_id} }");
+    $url .= "&redirect_uri=" . urlencode($redirectUri);
+    if (!empty($this->pluginCfg['RcauthSource']['idphint'])) {
+      $url .= "&idphint=" . urlencode(trim($this->pluginCfg['RcauthSource']['idphint']));
+    }
+
+    return $url;
+  }
   /**
    * Convert a raw result, as from eg retrieve(), into an array of attributes that
    * can be used for group mapping.
@@ -282,6 +267,12 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     $orgdata['Name'][0]['primary_name'] = true;
     // XXX this should be configurable
     $orgdata['Name'][0]['type'] = NameEnum::Alternate;
+    // XXX for now i will assume that Cert Model is alway available
+    $orgdata['Cert'][0]['subject'] = (string)$result->cert_subject_dn;
+    // Get the issuer from the config
+    if(!empty($this->pluginCfg['issuer'])) {
+      $orgdata['Cert'][0]['issuer'] = (string)$this->pluginCfg['issuer'];
+    }
 
     // More attributes to add in the future
     return $orgdata;
