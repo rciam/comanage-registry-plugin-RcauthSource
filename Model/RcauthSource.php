@@ -79,26 +79,22 @@ class RcauthSource extends AppModel {
   /**
    * Actions to take before a save operation is executed.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Boolean
    */
   public function beforeSave($options = array()) {
-    $this->log("@beforeSave: ",LOG_DEBUG);
-    // Check if the user provided a value
-    if(!empty($this->data['RcauthSource']['issuer'])){
-      // TODO maybe copy the issuer in certain certificate rows
-    }
+    $this->log(__METHOD__ . '::@',LOG_DEBUG);
     return true;
   }
 
   /**
    * Expose menu items.
    *
-   * @ since COmanage Registry v2.0.0
-   * @ return Array with menu location type as key and array of labels, controllers, actions as values.
+   * @since COmanage Registry v3.1.0
+   * @return Array with menu location type as key and array of labels, controllers, actions as values.
    */
   public function cmPluginMenus() {
-    $this->log("@cmPluginMenus:",LOG_DEBUG);
+    $this->log(__METHOD__ . '::@',LOG_DEBUG);
     return array();
   }
 }

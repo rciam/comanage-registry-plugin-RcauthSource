@@ -1,6 +1,6 @@
 <?php
 /**
- * COmanage Registry ORCID Source Co Petitions Controller
+ * COmanage Registry RCAuth Source Co Petitions Controller
  *
  * Portions licensed to the University Corporation for Advanced Internet
  * Development, Inc. ("UCAID") under one or more contributor license agreements.
@@ -42,7 +42,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
   /**
    * Enrollment Flow selectOrgIdentity (authenticate mode)
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  Integer $id CO Petition ID
    * @param  Array $oiscfg Array of configuration data for this plugin
    * @param  Array $onFinish URL, in Cake format
@@ -50,8 +50,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
    */
   protected function execute_plugin_selectOrgIdentityAuthenticate($id, $oiscfg, $onFinish, $actorCoPersonId) {
     // First pull our RCAUTH configuration
-    $fn = "execute_plugin_selectOrgIdentityAuthenticate";
-    $this->log(get_class($this)."::{$fn}::@", LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $args = array();
     $args['conditions']['RcauthSource.org_identity_source_id'] = $oiscfg['OrgIdentitySource']['id'];
     $args['contain'] = false;
@@ -63,7 +62,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
         array(_txt('ct.rcauth_sources.1'),
           $oiscfg['OrgIdentitySource']['id'])));
     }
-    $this->log(get_class($this)."::{$fn}:: mp_oa2_server => ".$cfg['RcauthSource']['mp_oa2_server'], LOG_DEBUG);
+    $this->log(__METHOD__ . "::Rcauth Plugin Config => ". print_r($cfg['RcauthSource'], true), LOG_DEBUG);
     try {
       // Get the MP OA2 endpoints
       $this->RcauthSourceBackend->getMPOPA2endpoints($cfg['RcauthSource']['mp_oa2_server']);
@@ -160,7 +159,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
       if($this->RcauthSource->validates()){
         $this->RcauthSource->save($save_data);
       } else {
-        $this->log(get_class($this)."::{$fn}::Rcauthsource data failed to validate", LOG_DEBUG);
+        $this->log(__METHOD__ . "::Rcauthsource data failed to validate", LOG_DEBUG);
         throw new RuntimeException(_txt('er.db.save'));
       }
 
@@ -230,7 +229,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
         $args['conditions'][] = 'OrgIdentitySourceRecord.org_identity_source_record_id IS NULL';
         $record = $this->OrgIdentitySourceRecord->OrgIdentity->find('first', $args);
         $org_identity_id = $record['OrgIdentity']['id'];
-        $this->log("org identity id(catch) => ".$org_identity_id,LOG_DEBUG);
+        $this->log(__METHOD__ . "::org identity id(catch) => ".$org_identity_id,LOG_DEBUG);
         unset($args);
         // retrieve org identity entry from CERTS table
         $args = array();
@@ -248,7 +247,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
         $args['conditions']['Cert.deleted'] = false;
         $args['fields'] = array('Cert.*');
         $cur_co_person_entry = $this->Cert->find('first',$args);
-        $this->log(get_class($this)."::{$fn}::cur co person entry => ".print_r($cur_co_person_entry,true),LOG_DEBUG);
+        $this->log(__METHOD__ . "::cur co person entry => ".print_r($cur_co_person_entry,true),LOG_DEBUG);
 
         // Update the certificate entry for the org_identity retrieved and for the current co person
         $this->certEntryUpdate($org_identity_entry, $cur_co_person_entry, $user_data_obj->cert_subject_dn, $cfg['RcauthSource']['issuer']);
@@ -275,8 +274,8 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
    * @param $new_issuer
    */
   private function certEntryUpdate($org_id_res, $co_person_res, $new_subject, $new_issuer){
-    $this->log("res org_id => ".print_r($org_id_res, true), LOG_DEBUG);
-    $this->log("res co person => ".print_r($co_person_res, true), LOG_DEBUG);
+    $this->log(__METHOD__ . "::res org_id => ".print_r($org_id_res, true), LOG_DEBUG);
+    $this->log(__METHOD__ . "::res co person => ".print_r($co_person_res, true), LOG_DEBUG);
 
     $issuer = $org_id_res['Cert']['issuer'];
     $subject = $org_id_res['Cert']['subject'];
@@ -354,11 +353,11 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController {
       if($this->Cert->Validates()) {
         $this->Cert->saveAll($data_certificate);
       } else {
-        $this->log("Cert data failed to validate", LOG_DEBUG);
+        $this->log(__METHOD__ . "::Cert data failed to validate", LOG_DEBUG);
         throw new RuntimeException(_txt('er.db.save'));
       }
     } catch (Exception $ex) {
-      $this->log("message: " . $ex, LOG_DEBUG);
+      $this->log(__METHOD__ . "::message: " . $ex, LOG_DEBUG);
     }
   }
 

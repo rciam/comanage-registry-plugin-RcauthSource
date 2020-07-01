@@ -55,7 +55,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
 
   /**
    * Generate an RCAUTH callback URL.  *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Array URL, in Cake array format
    */
   public function callbackUrl($oisid=null) {
@@ -84,7 +84,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * @return Object json
    */
   public function exchangeCode($redirectUri, $clientId, $clientSecret, $code) {
-    $this->log('@exchangeCode', LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
 
     $params = array(
       'grant_type'    => 'authorization_code',
@@ -171,13 +171,13 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * only return a non-empty array if they wish to take advantage of the automatic
    * group mapping service.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Array As specified
    */
 
   public function groupableAttributes() {
     // Not currently supported
-    $this->log('@groupableAttributes', LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     return array();
   }
 
@@ -185,12 +185,12 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * Obtain all available records in the IdentitySource, as a list of unique keys
    * (ie: suitable for passing to retrieve()).
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Array Array of unique keys
    * @throws DomainException If the backend does not support this type of requests
    */
   public function inventory() {
-    $this->log('@inventory', LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     throw new DomainException("NOT IMPLEMENTED");
   }
 
@@ -198,13 +198,13 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   /**
    * Obtain an access token from an API ID and secret.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  String $access_token
    * @return Object Json Object with user info and the Subject DN
    * @throws RuntimeException
    */
   protected function queryRcauthApi($access_token) {
-    $this->log("@queryRcauthApi", LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
 
     $options = array(
       'access_token' => $access_token
@@ -244,25 +244,25 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * Convert a raw result, as from eg retrieve(), into an array of attributes that
    * can be used for group mapping.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  String $raw Raw record, as obtained via retrieve()
    * @return Array Array, where keys are attribute names and values are lists (arrays) of attributes
    */
   public function resultToGroups($raw) {
     // Not currently supported
-    $this->log('@resultToGroups', LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     return array();
   }
 
   /**
    * Convert a search result into an Org Identity.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  Array $result RCAUTH Search Result. This is an object not an array
    * @return Array Org Identity and related models, in the usual format
    */
   protected function resultToOrgIdentity($result) {
-    $this->log('@resultToOrgIdentity', LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $orgdata = array();
     // XXX should map these
     // XXX what if more than one attribute?
@@ -298,8 +298,8 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * @throws OverflowException if more than one match
    */
   public function retrieve($access_token) {
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     try {
-      $this->log("@retrieve", LOG_DEBUG);
       $records = $this->queryrcauthApi($access_token);
     }
     catch(InvalidArgumentException $e) {
@@ -317,14 +317,14 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * to obtain the same record and attributes represent an OrgIdentity, including
    * related models.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  Array $attributes Array in key/value format, where key is the same as returned by searchAttributes()
    * @return Array Array of search results, as specified
    * @throws InvalidArgumentException
    * @throws RuntimeException
    */
   public function search($attributes) {
-    $this->log("@search", LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     throw new DomainException("NOT IMPLEMENTED");
   }
 
@@ -334,14 +334,14 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * to the IdentitySource (eg: a number or a field name) and label is the localized
    * string to be displayed to the user.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Array As specified
    */
   public function searchableAttributes() {
     // By default, rcauth uses a free form search. It is possible to search on
     // specific fields (eg: email), though for the initial implementation we
     // won't support that.
-    $this->log("@searchableAttributes", LOG_DEBUG);
+    $this->log(__METHOD__ . '::@', LOG_DEBUG);
     return array(
       // XXX This really isn't the right language key, we want an fd.*
       'q' => _txt('op.search')

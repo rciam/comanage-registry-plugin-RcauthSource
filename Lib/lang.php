@@ -1,6 +1,6 @@
 <?php
 /**
- * COmanage Registry ORCID Source Plugin Language File
+ * COmanage Registry RCAuth Source Plugin Language File
  *
  * Portions licensed to the University Corporation for Advanced Internet
  * Development, Inc. ("UCAID") under one or more contributor license agreements.

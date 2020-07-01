@@ -1,6 +1,6 @@
 <?php
 /**
- * COmanage Registry ORCID Source Controller
+ * COmanage Registry RCAuth Source Controller
  *
  * Portions licensed to the University Corporation for Advanced Internet
  * Development, Inc. ("UCAID") under one or more contributor license agreements.
@@ -37,12 +37,12 @@ class RcauthSourcesController extends SOISController {
   /**
    * Update a RcauthSource.
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @param  integer $id RcauthSource ID
    */
 
   public function edit($id) {
-    $this->log("@edit:id:".$id,LOG_DEBUG);
+    $this->log(__METHOD__ . '::@',LOG_DEBUG);
     parent::edit($id);
 
     // Set the callback URL
@@ -62,12 +62,12 @@ class RcauthSourcesController extends SOISController {
    * - precondition: Session.Auth holds data used for auth decisions
    * - postcondition: $permissions set with calculated permissions
    *
-   * @since  COmanage Registry v2.0.0
+   * @since  COmanage Registry v3.1.0
    * @return Array Permissions
    */
 
   function isAuthorized() {
-    $this->log("@isAuthorized",LOG_DEBUG);
+    $this->log(__METHOD__ . '::@',LOG_DEBUG);
     $roles = $this->Role->calculateCMRoles();
 
     // Construct the permission set for this user, which will also be passed to the view.
