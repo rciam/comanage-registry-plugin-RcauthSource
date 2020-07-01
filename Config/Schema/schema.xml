@@ -21,7 +21,7 @@
   
   @link          http://www.internet2.edu/comanage COmanage Project
   @package       registry
-  @since         COmanage Registry v2.0.0
+  @since         COmanage Registry v3.1.0
   @license       Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 -->
 <!--
@@ -41,14 +41,17 @@
     <field name="clientid" type="C" size="80" />
     <field name="client_secret" type="C" size="400" />
     <field name="access_token" type="C" size="400" />
-    <field name="created" type="T" />
-    <field name="modified" type="T" />
     <field name="refresh_token" type="C" size="400" />
     <field name="id_token" type="C" size="2000" />
     <field name="token_type" type="C" size="20" />
     <field name="issuer" type="C" size="256" />
     <field name="idphint" type="C" size="256" />
     <field name="mp_oa2_server" type="C" size="256" />
+    <field name="created" type="T" />
+    <field name="modified" type="T" />
+    <field name="revision" type="I" />
+    <field name="deleted" type="L" />
+    <field name="actor_identifier" type="C" size="256" />
     <index name="rcauth_sources_i1">
       <col>org_identity_source_id</col>
       <unique />

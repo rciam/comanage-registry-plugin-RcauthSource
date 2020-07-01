@@ -1,6 +1,6 @@
 <?php
 /**
- * COmanage Registry ORCID OrgIdentitySource Backend Model
+ * COmanage Registry RCAuth OrgIdentitySource Backend Model
  *
  * Portions licensed to the University Corporation for Advanced Internet
  * Development, Inc. ("UCAID") under one or more contributor license agreements.
@@ -26,9 +26,6 @@
  */
 
 App::uses("OrgIdentitySourceBackend", "Model");
-App::uses('HttpSocket', 'Network/Http');
-
-include_once("mpCfgUrl.php");
 
 class RcauthSourceBackend extends OrgIdentitySourceBackend {
   public $name = "RcauthSourceBackend";
@@ -99,7 +96,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
 
 
     $response = $this->do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
-    if(!$this->IsNullOrEmptyString($info['http_code'])){
+    if(!empty($info['http_code'])){
       // The request returned successfully. Dump data into an object, check their validity and return
       // data object from json decode
       // $data->access_token
@@ -112,7 +109,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
       if(!empty($data->access_token)) {
         return $data;
       }
-    }elseif (!$this->IsNullOrEmptyString($error)){
+    }elseif (!empty($error)){
       $this->log('@exchangeCode:curl http post failed: msg => '.$error, LOG_DEBUG);
       // There should be an error in the response
       throw new RuntimeException(_txt('er.rcauthsource.code',$error));
@@ -145,6 +142,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch,CURLOPT_FOLLOWLOCATION, false);
     curl_setopt($ch,CURLOPT_VERBOSE, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3000);
 
     // execute post
     $response = curl_exec($ch);
@@ -161,16 +159,6 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     curl_close($ch);
     // return success
     return $response;
-
-  }
-
-
-  /**
-   * @param $str
-   * @return bool
-   */
-  public function IsNullOrEmptyString($str){
-    return (!isset($str) || trim($str)==='');
   }
 
 
