@@ -49,9 +49,6 @@
     <field name="mp_oa2_server" type="C" size="256" />
     <field name="created" type="T" />
     <field name="modified" type="T" />
-    <field name="revision" type="I" />
-    <field name="deleted" type="L" />
-    <field name="actor_identifier" type="C" size="256" />
     <index name="rcauth_sources_i1">
       <col>org_identity_source_id</col>
       <unique />
