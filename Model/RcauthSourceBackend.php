@@ -21,7 +21,7 @@
  *
  * @link          http://www.internet2.edu/comanage COmanage Project
  * @package       registry-plugin
- * @since         COmanage Registry v2.0.0
+ * @since         COmanage Registry v3.1.0
  * @license       Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
@@ -249,7 +249,6 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   protected function resultToOrgIdentity($result) {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
     $orgdata = array();
-    // XXX should map these
     // XXX what if more than one attribute?
     $orgdata['OrgIdentity'] = array();
 
@@ -267,7 +266,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     $orgdata['Name'][0]['primary_name'] = true;
     // XXX this should be configurable
     $orgdata['Name'][0]['type'] = NameEnum::Alternate;
-    // XXX for now i will assume that Cert Model is alway available
+    // XXX for now i will assume that Cert Model is always available
     $orgdata['Cert'][0]['subject'] = (string)$result->cert_subject_dn;
     // Get the issuer from the config
     if(!empty($this->pluginCfg['issuer'])) {
