@@ -95,7 +95,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     );
 
 
-    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
+    $response = RcauthSourceUtils::HttpCurlClient($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
     if(!empty($info['http_code'])){
       // The request returned successfully. Dump data into an object, check their validity and return
       // data object from json decode
@@ -110,7 +110,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
         return $data;
       }
     }elseif (!empty($error)){
-      $this->log('@exchangeCode:curl http post failed: msg => '.$error, LOG_DEBUG);
+      $this->log(__METHOD__ . '::curl http post failed: msg => '.$error, LOG_DEBUG);
       // There should be an error in the response
       throw new RuntimeException(_txt('er.rcauthsource.code',$error));
     }
@@ -176,7 +176,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     //		   "family_name":"Doe",
     //		   "email":"jdoe@mail.com"
     //		}
-    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
+    $response = RcauthSourceUtils::HttpCurlClient($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
 
 
     if( (int)$info['http_code'] >= 400
@@ -243,7 +243,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * Convert a search result into an Org Identity.
    *
    * @since  COmanage Registry v3.1.0
-   * @param  Array $result RCAUTH Search Result. This is an object not an array
+   * @param  Object $result RCAUTH Search Result. This is an object not an array
    * @return Array Org Identity and related models, in the usual format
    */
   protected function resultToOrgIdentity($result) {

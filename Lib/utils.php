@@ -29,12 +29,12 @@ class RcauthSourceUtils
 
     // set the url, number of POST vars, POST data
     // Content-type: application/x-www-form-urlencoded => is the default approach for post requests
-    if(empty($options) || isset($options['curlType']) == 'POST'){
+    if(empty($options) || isset($options['curlType']) == 'POST') {
       curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_POST, count($fields));
       curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
     }
-    else{ //GET Request
+    else { //GET Request
       curl_setopt($ch, CURLOPT_POST, FALSE);
       curl_setopt($ch, CURLOPT_URL, $url.'?'.$fields_string);
     }
@@ -65,5 +65,3 @@ class RcauthSourceUtils
     return $response;
   }
 }
-
-?>
