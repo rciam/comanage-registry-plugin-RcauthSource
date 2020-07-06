@@ -16,7 +16,7 @@ class RcauthSourceUtils
    * @return bool|string
    * @throws Exception
    */
-  public static function HttpCurlClient($url, $fields, &$error, &$info,$options = NULL)
+  public static function HttpCurlClient($url, $fields, &$error, &$info, $options = NULL)
   {
     //url-ify the data for the POST
     $fields_string = "";
