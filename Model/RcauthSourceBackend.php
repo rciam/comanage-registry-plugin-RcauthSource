@@ -258,19 +258,24 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     // XXX document
     $orgdata['Name'] = array();
 
-    if(!empty($result->name))
+    if(!empty($result->name)) {
       $orgdata['Name'][0]['given'] = (string)$result->given_name;
-    if(!empty($result->family_name))
+    }
+    if(!empty($result->family_name)) {
       $orgdata['Name'][0]['family'] = (string)$result->family_name;
-    // Populate primary_name and type in the caller instead of here?
-    $orgdata['Name'][0]['primary_name'] = true;
-    // XXX this should be configurable
-    $orgdata['Name'][0]['type'] = NameEnum::Alternate;
-    // XXX for now i will assume that Cert Model is always available
-    $orgdata['Cert'][0]['subject'] = (string)$result->cert_subject_dn;
-    // Get the issuer from the config
-    if(!empty($this->pluginCfg['issuer'])) {
-      $orgdata['Cert'][0]['issuer'] = (string)$this->pluginCfg['issuer'];
+      // Populate primary_name and type in the caller instead of here?
+      $orgdata['Name'][0]['primary_name'] = true;
+      // XXX this should be configurable
+      $orgdata['Name'][0]['type'] = NameEnum::Alternate;
+    }
+
+    if(!empty((string)$result->cert_subject_dn)) {
+      // XXX for now i will assume that Cert Model is always available
+      $orgdata['Cert'][0]['subject'] = (string)$result->cert_subject_dn;
+      // Get the issuer from the config
+      if (!empty($this->pluginCfg['issuer'])) {
+        $orgdata['Cert'][0]['issuer'] = (string)$this->pluginCfg['issuer'];
+      }
     }
 
     // More attributes to add in the future

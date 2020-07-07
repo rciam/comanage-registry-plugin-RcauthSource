@@ -112,6 +112,12 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
         throw new RuntimeException(_txt('er.db.save'));
       }
 
+
+      // XXX find if there is an old Certificate from RCAUTH and remove it. There is no actuall value in updating
+      // XXX since the $sourcekey, i.e. accessToken, will always be different.
+      // XXX Eventually this should not be an OISPlugin but something else.
+      $this->unlinkRCAuthOrg($actorCoPersonId, $cfg['RcauthSource']['issuer']);
+
       // Create the OrgIdentity
       $OrgId = $this->OrgIdentitySource->createOrgIdentity($oiscfg['OrgIdentitySource']['id'],
                                                            $response->access_token,  // This is what exchange(job) should fetch.
@@ -146,5 +152,38 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
       'action'     => 'canvas',
       $actorCoPersonId
     ));
+  }
+
+  /**
+   * Unlink the RCAuth OrgIdentity from the CO Person
+   * @param $co_person_id
+   * @param $crt_issuer
+   */
+  public function unlinkRCAuthOrg($co_person_id, $crt_issuer) {
+    $args = array();
+    $args['joins'][0]['table'] = 'co_people';
+    $args['joins'][0]['alias'] = 'CoPerson';
+    $args['joins'][0]['type'] = 'INNER';
+    $args['joins'][0]['conditions'][0] = 'CoOrgIdentityLink.co_person_id=CoPerson.id';
+    $args['joins'][1]['table'] = 'certs';
+    $args['joins'][1]['alias'] = 'Cert';
+    $args['joins'][1]['type'] = 'INNER';
+    $args['joins'][1]['conditions'][0] = 'CoOrgIdentityLink.org_identity_id=Cert.org_identity_id';
+    $args['conditions']['CoPerson.id'] = $co_person_id;
+    $args['conditions']['Cert.issuer'] = $crt_issuer;
+    $args['fields'] = array('CoOrgIdentityLink.id');
+    $args['contain'] = false;
+
+
+    $this->CoOrgIdentityLink = ClassRegistry::init('CoOrgIdentityLink');
+    $ccoil_ret = $this->CoOrgIdentityLink->find('first', $args);
+
+    // There is no record so go back and continue to create one
+    if(empty($ccoil_ret["CoOrgIdentityLink"])) {
+      return;
+    }
+    // Delete the record
+    $ccoil_id = $ccoil_ret["CoOrgIdentityLink"]["id"];
+    $this->CoOrgIdentityLink->delete($ccoil_id);
   }
 }
