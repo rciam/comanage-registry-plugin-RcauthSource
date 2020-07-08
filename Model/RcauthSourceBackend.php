@@ -95,7 +95,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     );
 
 
-    $response = RcauthSourceUtils::HttpCurlClient($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
+    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
     if(!empty($info['http_code'])){
       // The request returned successfully. Dump data into an object, check their validity and return
       // data object from json decode
@@ -110,7 +110,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
         return $data;
       }
     }elseif (!empty($error)){
-      $this->log(__METHOD__ . '::curl http post failed: msg => '.$error, LOG_DEBUG);
+      $this->log('@exchangeCode:curl http post failed: msg => '.$error, LOG_DEBUG);
       // There should be an error in the response
       throw new RuntimeException(_txt('er.rcauthsource.code',$error));
     }
@@ -164,19 +164,19 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     );
 
     // The request will return a json with the following format and fields
-    //	  {
-    //	  	   "sub":"025659b401b45793253dbe525111c8e54145569de85e544dd557ef6825d3814c@example.org",
-    //		   "idp":"https://aai.example.org/proxy/saml2/idp/metadata.php",
-    //		   "eduPersonTargetedID":"https://aai.example.org/proxy/saml2/idp/metadata.php!7c066f48d4b19621a3c5bd4c7afd5882b20ab30d",
-    //		   "cert_subject_dn":"CN=John Doe yCKcijJUgi9e8Y4s,O=Example Org,OU=AAI,O=Example",
-    //		   "idp_display_name":"AAI Example",
-    //		   "name":"John Doe",
-    //		   "eduPersonUniqueId":"025659b401b45793253dbe525111c8e54145569de85e544dd557ef6825d3814c@example.org",
-    //		   "given_name":"John",
-    //		   "family_name":"Doe",
-    //		   "email":"jdoe@mail.com"
-    //		}
-    $response = RcauthSourceUtils::HttpCurlClient($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
+    //  {
+    //     "sub":"025659b401b45793253dbe525111c8e54145569de85e544dd557ef6825d3814c@example.org",
+    //     "idp":"https://aai.example.org/proxy/saml2/idp/metadata.php",
+    //     "eduPersonTargetedID":"https://aai.example.org/proxy/saml2/idp/metadata.php!7c066f48d4b19621a3c5bd4c7afd5882b20ab30d",
+    //     "cert_subject_dn":"CN=John Doe yCKcijJUgi9e8Y4s,O=Example Org,OU=AAI,O=Example",
+    //     "idp_display_name":"AAI Example",
+    //     "name":"John Doe",
+    //     "eduPersonUniqueId":"025659b401b45793253dbe525111c8e54145569de85e544dd557ef6825d3814c@example.org",
+    //     "given_name":"John",
+    //     "family_name":"Doe",
+    //     "email":"jdoe@mail.com"
+    //  }
+    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
 
 
     if( (int)$info['http_code'] >= 400
@@ -243,7 +243,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    * Convert a search result into an Org Identity.
    *
    * @since  COmanage Registry v3.1.0
-   * @param  Object $result RCAUTH Search Result. This is an object not an array
+   * @param  Array $result RCAUTH Search Result. This is an object not an array
    * @return Array Org Identity and related models, in the usual format
    */
   protected function resultToOrgIdentity($result) {
