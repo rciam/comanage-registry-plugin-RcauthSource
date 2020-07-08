@@ -40,13 +40,10 @@
     <!-- Don't call this client_id or cake will think it's a foreign key -->
     <field name="clientid" type="C" size="80" />
     <field name="client_secret" type="C" size="400" />
-    <field name="access_token" type="C" size="400" />
-    <field name="refresh_token" type="C" size="400" />
-    <field name="id_token" type="C" size="2000" />
-    <field name="token_type" type="C" size="20" />
     <field name="issuer" type="C" size="256" />
     <field name="idphint" type="C" size="256" />
     <field name="mp_oa2_server" type="C" size="256" />
+    <field name="provision" type="I"/>
     <field name="created" type="T" />
     <field name="modified" type="T" />
     <index name="rcauth_sources_i1">

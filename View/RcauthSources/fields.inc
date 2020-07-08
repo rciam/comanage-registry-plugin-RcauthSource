@@ -112,19 +112,32 @@
       <?php print ($e ? $this->Form->input('client_secret', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['client_secret'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
     </div>
   </li>
-    <li>
-        <div class="field-name">
-            <div class="field-title">
-        <?php print _txt('pl.rcauthsource.issuer'); ?>
-                <span class="required">*</span>
-            </div>
-            <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
-        </div>
-        <div class="field-info">
-      <?php print ($e ? $this->Form->input('issuer', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['issuer'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
-        </div>
-    </li>
-
+  <li>
+      <div class="field-name">
+          <div class="field-title">
+      <?php print _txt('pl.rcauthsource.issuer'); ?>
+              <span class="required">*</span>
+          </div>
+          <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
+      </div>
+      <div class="field-info">
+    <?php print ($e ? $this->Form->input('issuer', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['issuer'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
+      </div>
+  </li>
+  <li>
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rcauthsource.provision'); ?>
+      </div>
+      <div class="field-desc"><?php print _txt('pl.rcauthsource.provision.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php
+      $checked = isset($rcauth_sources[0]["RcauthSource"]["provision"]) ? (bool)filter_var($rcauth_sources[0]["RcauthSource"]["provision"]) : false;
+      print ($e ? $this->Form->checkbox('provision', array('checked' => $checked)) : (bool)$checked);
+      ?>
+    </div>
+  </li>
 
   <?php if($e): ?>
     <li class="fields-submit">

@@ -34,7 +34,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
 
   public $uses = array("CoPetition",
                        "OrgIdentitySource",
-                       "RcauthSource",
+                       "RcauthSource.RcauthSource",
                        "RcauthSource.RcauthSourceBackend");
 
   /**
@@ -53,9 +53,9 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
     $args = array();
     $args['conditions']['RcauthSource.org_identity_source_id'] = $oiscfg['OrgIdentitySource']['id'];
     $args['contain'] = false;
-    // fixme: Cache this only for one read. Since the plugin goes to RCAuth and then redirects back here
-    // as a result we should not read the database again
     $cfg = $this->RcauthSource->find('first', $args);
+
+    // XXX Cache the config here
 
     if (empty($cfg)) {
       throw new InvalidArgumentException(_txt('er.notfound',
@@ -91,40 +91,20 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
                                                            $cfg['RcauthSource']['client_secret'],
                                                            $this->request->query['code']);
 
-      // Save the data we retrieved above for the current client id
-      // Create th data structure
-      $oauth2_data['RcauthSource'] = array(
-        'access_token' => $response->access_token,
-        'id_token' => $response->id_token,
-        'token_type' => $response->token_type
-      );
-      if (isset($response->refresh_token)) {
-        $oauth2_data['RcauthSource']['refresh_token'] = $response->refresh_token;
-      }
-
-      $this->RcauthSource->id = $cfg['RcauthSource']['id'];
-      // Save the eduPersonUniqueId
-      $this->RcauthSource->set($oauth2_data);
-      if ($this->RcauthSource->validates()) {
-        $this->RcauthSource->save($oauth2_data);
-      } else {
-        $this->log(__METHOD__ . "::Rcauthsource data failed to validate", LOG_DEBUG);
-        throw new RuntimeException(_txt('er.db.save'));
-      }
-
 
       // XXX find if there is an old Certificate from RCAUTH and remove it. There is no actuall value in updating
       // XXX since the $sourcekey, i.e. accessToken, will always be different.
       // XXX Eventually this should not be an OISPlugin but something else.
-      $this->unlinkRCAuthOrg($actorCoPersonId, $cfg['RcauthSource']['issuer']);
+      $this->RcauthSource->unlinkRCAuthOrg($actorCoPersonId, $cfg['RcauthSource']['issuer']);
 
+      $provision_status = isset($cfg["RcauthSource"]["provision"]) ? (bool)$cfg["RcauthSource"]["provision"] : false;
       // Create the OrgIdentity
       $OrgId = $this->OrgIdentitySource->createOrgIdentity($oiscfg['OrgIdentitySource']['id'],
                                                            $response->access_token,  // This is what exchange(job) should fetch.
                                                            $actorCoPersonId,
                                                            $this->cur_co['Co']['id'],
                                                            $actorCoPersonId,
-                                                           false); // XXX provision is set to false. Pershaps we need to make this configurable
+                                                           $provision_status);
 
       // Record the RCAUTH into History and Petition History
       $this->CoPetition->EnrolleeOrgIdentity->HistoryRecord->record($actorCoPersonId,
@@ -140,11 +120,24 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
                                                          _txt('pl.rcauthsource.linked', array($response->access_token)));
     } catch (Exception $e) {
       // This might happen if (eg) the Rcauth is already in use
+      $this->Flash->set(_txt('er.rcauthsource.add_update'), array('key' => 'error'));
       throw new RuntimeException($e->getMessage());
     }
 
-    // XXX we should revisit if we decide that the plugin should provision the fetched data
+    // XXX Remove chached cfg here
+
+    $this->Flash->set(_txt('op.rcauthsource.add_update'), array('key' => 'success'));
     // The step is done
+    // Redirect to provisioning
+    if($provision_status) {
+      // redirect to user profile
+      $this->redirect(array(
+        'plugin'     => null,
+        'controller' => 'co_petitions',
+        'action'     => 'provision',
+        $id
+      ));
+    }
     // redirect to user profile
     $this->redirect(array(
       'plugin'     => null,
@@ -152,38 +145,5 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
       'action'     => 'canvas',
       $actorCoPersonId
     ));
-  }
-
-  /**
-   * Unlink the RCAuth OrgIdentity from the CO Person
-   * @param $co_person_id
-   * @param $crt_issuer
-   */
-  public function unlinkRCAuthOrg($co_person_id, $crt_issuer) {
-    $args = array();
-    $args['joins'][0]['table'] = 'co_people';
-    $args['joins'][0]['alias'] = 'CoPerson';
-    $args['joins'][0]['type'] = 'INNER';
-    $args['joins'][0]['conditions'][0] = 'CoOrgIdentityLink.co_person_id=CoPerson.id';
-    $args['joins'][1]['table'] = 'certs';
-    $args['joins'][1]['alias'] = 'Cert';
-    $args['joins'][1]['type'] = 'INNER';
-    $args['joins'][1]['conditions'][0] = 'CoOrgIdentityLink.org_identity_id=Cert.org_identity_id';
-    $args['conditions']['CoPerson.id'] = $co_person_id;
-    $args['conditions']['Cert.issuer'] = $crt_issuer;
-    $args['fields'] = array('CoOrgIdentityLink.id');
-    $args['contain'] = false;
-
-
-    $this->CoOrgIdentityLink = ClassRegistry::init('CoOrgIdentityLink');
-    $ccoil_ret = $this->CoOrgIdentityLink->find('first', $args);
-
-    // There is no record so go back and continue to create one
-    if(empty($ccoil_ret["CoOrgIdentityLink"])) {
-      return;
-    }
-    // Delete the record
-    $ccoil_id = $ccoil_ret["CoOrgIdentityLink"]["id"];
-    $this->CoOrgIdentityLink->delete($ccoil_id);
   }
 }

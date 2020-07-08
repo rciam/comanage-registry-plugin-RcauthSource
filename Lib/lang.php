@@ -38,23 +38,29 @@ $cm_rcauth_source_texts['en_US'] = array(
   'ct.rcauth_sources.pl' => 'RCAUTH Organizational Identity Sources',
 
   // Error messages
-  'er.rcauthsource.code'       => 'Error exchanging code for RCAUTH and access token: %1$s',
-  'er.rcauthsource.search'     => 'Search request returned %1$s',
-  'er.rcauthsource.token.api'  => 'Access token not found in API response',
-  'er.rcauthsource.token.none' => 'Access token not configured (try resaving configuration)',
+  'er.rcauthsource.code'               => 'Error exchanging code for RCAUTH and access token: %1$s',
+  'er.rcauthsource.search'             => 'Search request returned %1$s',
+  'er.rcauthsource.token.api'          => 'Access token not found in API response',
+  'er.rcauthsource.token.none'         => 'Access token not configured (try resaving configuration)',
   'er.rcauthsource.mp_oa2_server.none' => 'No or invalid MasterPortal OA2 Url. Please check RCAuth OIS configuration',
+  'er.rcauthsource.add_update'         => 'RCAuth Cert Failed',
 
   // Plugin texts
-  'pl.rcauthsource.clientid'       => 'Client ID',
-  'pl.rcauthsource.clientid.desc'  => 'Client ID obtained from registering with the RCAUTH Public ID',
-  'pl.rcauthsource.linked'         => 'Obtained DN "%1$s" via authenticated OAuth flow',
-  'pl.rcauthsource.redirect_url'   => 'RCAUTH Redirect URI',
-  'pl.rcauthsource.secret'         => 'Client Secret',
-  'pl.rcauthsource.secret.desc'    => 'Client Secret obtained from registering with the RCAUTH Public ID',
-  'pl.rcauthsource.issuer'         => 'DN Issuer',
-  'pl.rcauthsource.issuer.desc'    => 'The DN of the certificate issuer',
-  'pl.rcauthsource.idphint'        => 'IdpHint parameter',
-  'pl.rcauthsource.idphint.desc'   => 'Optionally the VO portal can redirect the user to a specific IdP by also sending an idphint parameter',
+  'pl.rcauthsource.clientid'             => 'Client ID',
+  'pl.rcauthsource.clientid.desc'        => 'Client ID obtained from registering with the RCAUTH Public ID',
+  'pl.rcauthsource.linked'               => 'Obtained DN "%1$s" via authenticated OAuth flow',
+  'pl.rcauthsource.redirect_url'         => 'RCAUTH Redirect URI',
+  'pl.rcauthsource.secret'               => 'Client Secret',
+  'pl.rcauthsource.secret.desc'          => 'Client Secret obtained from registering with the RCAUTH Public ID',
+  'pl.rcauthsource.issuer'               => 'DN Issuer',
+  'pl.rcauthsource.issuer.desc'          => 'The DN of the certificate issuer',
+  'pl.rcauthsource.idphint'              => 'IdpHint parameter',
+  'pl.rcauthsource.idphint.desc'         => 'Optionally the VO portal can redirect the user to a specific IdP by also sending an idphint parameter',
   'pl.rcauthsource.mp_oa2_server'        => 'MasterPortal OP configuration URL',
   'pl.rcauthsource.mp_oa2_server.desc'   => 'URL of the well known configuration of MasterPortal\'s OP',
+  'pl.rcauthsource.provision'            => 'Provision',
+  'pl.rcauthsource.provision.desc'       => 'Enable or Disable Provisioning at the end of the Enrollment Flow',
+
+  // Plugin operations
+  'op.rcauthsource.add_update'           => 'RCAuth Cert Saved',
 );
