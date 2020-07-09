@@ -65,8 +65,6 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
     $this->RcauthSourceBackend->setConfig($cfg);
     $this->log(__METHOD__ . "::Rcauth Plugin Config => " . print_r($cfg['RcauthSource'], true), LOG_DEBUG);
     try {
-      // Get the MP OA2 endpoints
-      $this->RcauthSourceBackend->getMPOPA2endpoints($cfg['RcauthSource']['mp_oa2_server']);
       // Check if we have data
       $authEndpoint = $this->RcauthSourceBackend->getMpOA2Server()->getAuthorizationEndpoint();
       if (!isset($authEndpoint)) {

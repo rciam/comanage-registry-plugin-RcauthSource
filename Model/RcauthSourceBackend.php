@@ -26,6 +26,7 @@
  */
 
 App::uses("OrgIdentitySourceBackend", "Model");
+App::uses('HttpSocket', 'Network/Http');
 
 class RcauthSourceBackend extends OrgIdentitySourceBackend {
   public $name = "RcauthSourceBackend";
@@ -34,14 +35,13 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   public $useTable = false;
 
   protected $mpOA2Server = null;
+  protected $httpClient = null;
 
-  /**
-   * @param $mpOA2Url   the Url of the Masterportal Oauth2 server of the RCAUTH CA
-   */
-  public function getMPOPA2endpoints($mpOA2Url){
-    if($this->mpOA2Server === null) {
-      $this->mpOA2Server = new mpCfgUrl($mpOA2Url);
+  public function httpClient () {
+    if($this->httpClient === null) {
+      $this->httpClient = new HttpSocket();
     }
+    return $this->httpClient;
   }
 
   /**
@@ -49,6 +49,10 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
    */
   public function getMpOA2Server()
   {
+    if($this->mpOA2Server === null) {
+      $mpOA2Url = $this->pluginCfg['RcauthSource']['mp_oa2_server'];
+      $this->mpOA2Server = new mpCfgUrl($mpOA2Url);
+    }
     return $this->mpOA2Server;
   }
 
@@ -86,33 +90,39 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   public function exchangeCode($redirectUri, $clientId, $clientSecret, $code) {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
 
-    $params = array(
+    $fields = array(
       'grant_type'    => 'authorization_code',
       'code'          => $code,
       'redirect_uri'  => $redirectUri,
       'client_id'     => $clientId,
       'client_secret' => $clientSecret
     );
+    $options = array(
+      'redirect' => true
+    );
 
 
-    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getTokenEndpoint(),$params,$error, $info);
-    if(!empty($info['http_code'])){
+    $response = $this->httpClient()->post($this->mpOA2Server->getTokenEndpoint(), $fields, $options);
+    if($response->isOk()) {
       // The request returned successfully. Dump data into an object, check their validity and return
       // data object from json decode
       // $data->access_token
       // $data->refresh_token
       // $data->token_type
       // $data->expires_in
-      $data =json_decode($response);
+      $data =json_decode($response->body);
 
       // We'll get a 200 response on success or failure
       if(!empty($data->access_token)) {
         return $data;
       }
-    }elseif (!empty($error)){
-      $this->log('@exchangeCode:curl http post failed: msg => '.$error, LOG_DEBUG);
+    } else {
+      $error = json_decode($response->body);
+      $this->log(__METHOD__ . '::Response Code => '. $response->code, LOG_DEBUG);
+      $this->log(__METHOD__ . '::Error Description => '. $error->error_description, LOG_DEBUG);
       // There should be an error in the response
-      throw new RuntimeException(_txt('er.rcauthsource.code',$error));
+      $ret_msg = $error->error . '(' . $response->code . ')';
+      throw new RuntimeException(_txt('er.rcauthsource.code', $ret_msg));
     }
   }
 
@@ -159,8 +169,11 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
   protected function queryRcauthApi($access_token) {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
 
-    $options = array(
+    $fields = array(
       'access_token' => $access_token
+    );
+    $options = array(
+      'redirect' => true
     );
 
     // The request will return a json with the following format and fields
@@ -176,22 +189,17 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     //     "family_name":"Doe",
     //     "email":"jdoe@mail.com"
     //  }
-    $response = RcauthSourceUtils::do_curl($this->mpOA2Server->getUserinfoEndpoint(),$options,$error, $info);
-
-
-    if( (int)$info['http_code'] >= 400
-        && (int)$info['http_code'] < 500 ) {
-      // Most likely retrieving an invalid rcauth
-      throw new InvalidArgumentException(_txt('er.rcauthsource.search', array($info['http_code'])));
+    $response = $this->httpClient()->post($this->mpOA2Server->getUserinfoEndpoint(), $fields, $options);
+    if($response->isOk()) {
+      return json_decode($response->body);
+    } else {
+      $error = json_decode($response->body);
+      $this->log(__METHOD__ . '::Response Code => '. $response->code, LOG_DEBUG);
+      $this->log(__METHOD__ . '::Error Description => '. $error->error_description, LOG_DEBUG);
+      // There should be an error in the response
+      $ret_msg = $error->error . '(' . $response->code . ')';
+      throw new RuntimeException(_txt('er.rcauthsource.code', $ret_msg));
     }
-
-    if((int)$info['http_code'] !== 200) {
-      // This is probably an RDF blob, which is slightly annoying to parse.
-      // Rather than do it properly since we don't parse RDF anywhere else,
-      // we return a generic error.
-      throw new RuntimeException(_txt('er.rcauthsource.search', array($info['http_code'])));
-    }
-    return json_decode($response);
   }
 
 
