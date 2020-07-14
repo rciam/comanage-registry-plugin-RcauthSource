@@ -90,7 +90,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
                                                            $this->request->query['code']);
 
 
-      // XXX find if there is an old Certificate from RCAUTH and remove it. There is no actuall value in updating
+      // XXX find if there is an old Certificate from RCAUTH and remove it. There is no actual value in updating
       // XXX since the $sourcekey, i.e. accessToken, will always be different.
       // XXX Eventually this should not be an OISPlugin but something else.
       $this->RcauthSource->unlinkRCAuthOrg($actorCoPersonId, $cfg['RcauthSource']['issuer']);

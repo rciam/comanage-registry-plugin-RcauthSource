@@ -15,7 +15,7 @@ Not yet implemented
 ## Configuration
 
 After the installation, you have to configure the plugin before using it. 
-1. Navigate to Configuration > [Organizational Identity Sources](https://spaces.at.internet2.edu/display/COmanage/Organizational+Identity+Sources) -> Add Organizational Identity Source
+1. Navigate to Configuration > [Organizational Identity Sources](https://spaces.at.internet2.edu/display/COmanage/Organizational+Identity+Sources) > Add Organizational Identity Source
 2. Add an RcauthSource plugin:
    - Plugin: RcauthSource
    - Status: Active
