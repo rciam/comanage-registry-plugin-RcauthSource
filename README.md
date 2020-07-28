@@ -37,6 +37,14 @@ After the installation, you have to configure the plugin before using it.
    - Status: Active
    - Match Strategy: Do not Match
 
+## Compatibility matrix
+
+This table matches the Plugin version with the supported COmanage version.
+
+| Plugin |  COmanage |    PHP    |
+|:------:|:---------:|:---------:|
+| v1.0.0 | v3.1.x    | &gt;=v5.6 |
+
 ## License
 
 Licensed under the Apache 2.0 license, for details see [LICENSE](https://github.com/rciam/comanage-registry-plugin-RcauthSource/blob/master/LICENSE).
