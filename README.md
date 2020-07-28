@@ -31,7 +31,9 @@ After the installation, you have to configure the plugin before using it.
      - Client Secret obtained from registering with the RCAUTH Public ID
    - DN Issuer
      - The DN of the certificate issuer
-4. Navicate to Configuration > [Pipelines](https://spaces.at.internet2.edu/display/COmanage/Registry+Pipelines) -> Add Pipeline
+   - Provisioning
+     - Enable or disable provisioning for this plugin
+4. Navicate to Configuration > [Pipelines](https://spaces.at.internet2.edu/display/COmanage/Registry+Pipelines) > Add Pipeline
    - Status: Active
    - Match Strategy: Do not Match
 

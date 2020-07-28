@@ -90,12 +90,14 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
                                                            $this->request->query['code']);
 
 
-      // XXX find if there is an old Certificate from RCAUTH and remove it. There is no actual value in updating
-      // XXX since the $sourcekey, i.e. accessToken, will always be different.
-      // XXX Eventually this should not be an OISPlugin but something else.
+      $provision_status = isset($cfg["RcauthSource"]["provision"]) ? (bool)$cfg["RcauthSource"]["provision"] : false;
+
+      // XXX Find if there is an old Certificate from RCAUTH and remove it.
+      // XXX We can not sync since the existing OrgIdentitySource->syncOrgIdentity() function has no knowledge of
+      // XXX our Cert Model.
+      // todo: Revisit if we decide to move to official Certificates plugin in a future version
       $this->RcauthSource->unlinkRCAuthOrg($actorCoPersonId, $cfg['RcauthSource']['issuer']);
 
-      $provision_status = isset($cfg["RcauthSource"]["provision"]) ? (bool)$cfg["RcauthSource"]["provision"] : false;
       // Create the OrgIdentity
       $OrgId = $this->OrgIdentitySource->createOrgIdentity($oiscfg['OrgIdentitySource']['id'],
                                                            $response->access_token,  // This is what exchange(job) should fetch.
@@ -116,32 +118,32 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
                                                          $actorCoPersonId,
                                                          PetitionActionEnum::IdentityLinked,
                                                          _txt('pl.rcauthsource.linked', array($response->access_token)));
+
+      $this->Flash->set(_txt('op.rcauthsource.add_update'), array('key' => 'success'));
+
+      // The step is done
+      // Redirect to provisioning
+      if($provision_status) {
+        // redirect to user profile
+        $this->redirect(array(
+          'plugin'     => null,
+          'controller' => 'co_petitions',
+          'action'     => 'provision',
+          $id
+        ));
+      }
     } catch (Exception $e) {
       // This might happen if (eg) the Rcauth is already in use
       $this->Flash->set(_txt('er.rcauthsource.add_update'), array('key' => 'error'));
-      throw new RuntimeException($e->getMessage());
-    }
-
-    // XXX Remove chached cfg here
-
-    $this->Flash->set(_txt('op.rcauthsource.add_update'), array('key' => 'success'));
-    // The step is done
-    // Redirect to provisioning
-    if($provision_status) {
+      return false;
+    } finally {
       // redirect to user profile
       $this->redirect(array(
         'plugin'     => null,
-        'controller' => 'co_petitions',
-        'action'     => 'provision',
-        $id
+        'controller' => 'co_people',
+        'action'     => 'canvas',
+        $actorCoPersonId
       ));
     }
-    // redirect to user profile
-    $this->redirect(array(
-      'plugin'     => null,
-      'controller' => 'co_people',
-      'action'     => 'canvas',
-      $actorCoPersonId
-    ));
   }
 }

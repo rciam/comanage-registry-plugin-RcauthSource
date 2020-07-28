@@ -44,6 +44,7 @@ $cm_rcauth_source_texts['en_US'] = array(
   'er.rcauthsource.token.none'         => 'Access token not configured (try resaving configuration)',
   'er.rcauthsource.mp_oa2_server.none' => 'No or invalid MasterPortal OA2 Url. Please check RCAuth OIS configuration',
   'er.rcauthsource.add_update'         => 'RCAuth Certificate Failed',
+  'er.rcauthsource.sorid'              => 'Updating OrgIdentity Source Record Failed.',
 
   // Plugin texts
   'pl.rcauthsource.clientid'             => 'Client ID',
