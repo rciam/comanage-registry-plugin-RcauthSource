@@ -15,7 +15,7 @@ alter table cm_rcauth_sources drop column refresh_token;
 * Pull the changes from [RCIAM COManage branch](https://github.com/rciam/comanage-registry/tree/rciam-3.1.x)
 * [Clone/Install RcauthSource](https://github.com/rciam/comanage-registry-plugin-RcauthSource) plugin in /path/to/comanage/local/Plugin
   * It is VERY IMPORTANT that the plugin gets extracted in a **directory** named **RcauthSource**
-* Clear COmanage Cache so that model change take affect.
+* Clear COmanage Cache so that Model changes take affect.
 ```bash
 su - www-data -s /bin/bash -c "cd /path/to/comanage/app && ./Console/clearcache"
 ```
