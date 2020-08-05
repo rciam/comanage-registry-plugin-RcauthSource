@@ -109,7 +109,11 @@
       <div class="field-desc"><?php print _txt('pl.rcauthsource.secret.desc'); ?></div>
     </div>
     <div class="field-info">
-      <?php print ($e ? $this->Form->input('client_secret', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['client_secret'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
+    <?php 
+      $value = empty($vv_rcauth_client_secret) ? ''
+                    : filter_var($vv_rcauth_client_secret, FILTER_SANITIZE_SPECIAL_CHARS);
+      print $this->Form->input('client_secret', array('size' => 50, 'maxlength'=>'1024', 'value' => $value));
+    ?>
     </div>
   </li>
   <li>

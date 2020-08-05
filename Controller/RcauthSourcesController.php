@@ -50,6 +50,12 @@ class RcauthSourcesController extends SOISController {
     // this variable, containing the redirect url is the one shown in comanage web ui screen
     // this is the auto generated redirect url that we register in with the Vo
     $this->set('vv_rcauth_redirect_url', $this->RcauthSourceBackend->callbackUrl());
+    
+  }
+
+  function beforeRender() {
+    parent::beforeRender();
+    $this->set('vv_rcauth_client_secret', $this->RcauthSource->getClientSecret($this->RcauthSource->data));
   }
 
   function checkWriteFollowups($reqdata, $curdata = null, $origdata = null) {
