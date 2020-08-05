@@ -81,7 +81,9 @@
   </li>
   <li>
     <div class="field-name">
-      <div class="field-title"><?php print _txt('pl.rcauthsource.mp_oa2_server'); ?></div>
+      <div class="field-title"><?php print _txt('pl.rcauthsource.mp_oa2_server'); ?>
+        <span class="required">*</span>
+      </div>     
       <div class="field-desc"><?php print _txt('pl.rcauthsource.mp_oa2_server.desc'); ?></div>
     </div>
     <div class="field-info">
@@ -109,14 +111,18 @@
       <div class="field-desc"><?php print _txt('pl.rcauthsource.secret.desc'); ?></div>
     </div>
     <div class="field-info">
-      <?php print ($e ? $this->Form->input('client_secret', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['client_secret'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
+    <?php 
+      $value = empty($vv_rcauth_client_secret) ? ''
+                    : filter_var($vv_rcauth_client_secret, FILTER_SANITIZE_SPECIAL_CHARS);
+      print $this->Form->input('client_secret', array('size' => 50, 'maxlength'=>'1024', 'value' => $value));
+    ?>
     </div>
   </li>
   <li>
       <div class="field-name">
           <div class="field-title">
-      <?php print _txt('pl.rcauthsource.issuer'); ?>
-              <span class="required">*</span>
+            <?php print _txt('pl.rcauthsource.issuer'); ?>
+            <span class="required">*</span>
           </div>
           <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
       </div>

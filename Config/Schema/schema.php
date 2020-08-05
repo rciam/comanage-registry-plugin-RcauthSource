@@ -46,7 +46,7 @@ class RcauthSourceSchema extends CakeSchema {
     'org_identity_source_id' => array('type' => 'integer', 'null' => true, 'default' => null),
     'provision' => array('type' => 'integer', 'null' => true, 'default' => null),
     'clientid' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 80),
-    'client_secret' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 400),
+    'client_secret' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 1024),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'issuer' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 256),

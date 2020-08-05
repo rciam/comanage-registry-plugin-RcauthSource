@@ -86,7 +86,7 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
       $redirectUri = Router::url($this->RcauthSourceBackend->callbackUrl(), array('full' => true));
       $response = $this->RcauthSourceBackend->exchangeCode($redirectUri,
                                                            $cfg['RcauthSource']['clientid'],
-                                                           $cfg['RcauthSource']['client_secret'],
+                                                           $this->RcauthSource->getClientSecret($cfg),
                                                            $this->request->query['code']);
 
 

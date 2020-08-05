@@ -39,7 +39,7 @@
     </field>
     <!-- Don't call this client_id or cake will think it's a foreign key -->
     <field name="clientid" type="C" size="80" />
-    <field name="client_secret" type="C" size="400" />
+    <field name="client_secret" type="C" size="1024" />
     <field name="issuer" type="C" size="256" />
     <field name="idphint" type="C" size="256" />
     <field name="mp_oa2_server" type="C" size="256" />

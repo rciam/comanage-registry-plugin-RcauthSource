@@ -68,7 +68,33 @@ class RcauthSource extends AppModel {
    */
   public function beforeSave($options = array()) {
     $this->log(__METHOD__ . '::@', LOG_DEBUG);
+    $key = Configure::read('Security.salt');
+    Configure::write('Security.useOpenSsl', true);
+    if(!empty($this->data["RcauthSource"]["client_secret"])) {
+      $stored_key = (!is_null($this->id)) ? $this->field('client_secret', ['id' => $this->id]) : '';
+      if($stored_key !== $this->data["RcauthSource"]["client_secret"]) {
+        $client_secret = base64_encode(Security::encrypt($this->data["RcauthSource"]["client_secret"], $key));
+        $this->data["RcauthSource"]["client_secret"] = $client_secret;
+      }
+    }
     return true;
+  }
+  
+  /**
+   * getClientSecret
+   *
+   * @param  mixed $rcauthSourceData
+   * @return false|string
+   * @throws InvalidArgumentException
+   */
+  public function getClientSecret($rcauthSourceData) {
+    if(empty($rcauthSourceData["RcauthSource"]["client_secret"])) {
+      throw new InvalidArgumentException(_txt('er.notfound',
+        array(_txt('ct.rcauth_sources.1'), _txt('pl.rcauthsource.secret'))));
+    }
+    Configure::write('Security.useOpenSsl', true);
+    $client_secret = Security::decrypt(base64_decode($rcauthSourceData["RcauthSource"]["client_secret"]), Configure::read('Security.salt'));
+    return $client_secret;
   }
 
   /**
