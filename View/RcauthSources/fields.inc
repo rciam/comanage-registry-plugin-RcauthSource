@@ -81,7 +81,9 @@
   </li>
   <li>
     <div class="field-name">
-      <div class="field-title"><?php print _txt('pl.rcauthsource.mp_oa2_server'); ?></div>
+      <div class="field-title"><?php print _txt('pl.rcauthsource.mp_oa2_server'); ?>
+        <span class="required">*</span>
+      </div>     
       <div class="field-desc"><?php print _txt('pl.rcauthsource.mp_oa2_server.desc'); ?></div>
     </div>
     <div class="field-info">
@@ -119,8 +121,8 @@
   <li>
       <div class="field-name">
           <div class="field-title">
-      <?php print _txt('pl.rcauthsource.issuer'); ?>
-              <span class="required">*</span>
+            <?php print _txt('pl.rcauthsource.issuer'); ?>
+            <span class="required">*</span>
           </div>
           <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
       </div>
