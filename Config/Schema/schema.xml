@@ -43,6 +43,7 @@
     <field name="issuer" type="C" size="256" />
     <field name="idphint" type="C" size="256" />
     <field name="mp_oa2_server" type="C" size="256" />
+    <field name="scopes" type="C" size="256" />
     <field name="provision" type="I"/>
     <field name="created" type="T" />
     <field name="modified" type="T" />

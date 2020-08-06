@@ -1,0 +1,13 @@
+ul.form-list li.field-flex {
+    display: flex;
+    align-items: center;
+  }
+
+ul.form-list .field-info-flex .checkbox input {
+    width: auto;
+    flex-grow: 1;
+  }
+
+.checkbox {    
+    margin-left: 6px;
+}

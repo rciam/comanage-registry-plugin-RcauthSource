@@ -49,21 +49,21 @@ class RcauthSourcesController extends SOISController {
     // ioigoume
     // this variable, containing the redirect url is the one shown in comanage web ui screen
     // this is the auto generated redirect url that we register in with the Vo
-    $this->set('vv_rcauth_redirect_url', $this->RcauthSourceBackend->callbackUrl());
-    
+    $this->set('vv_rcauth_redirect_url', $this->RcauthSourceBackend->callbackUrl());  
   }
+  
+  /**
+   * Callback after controller methods are invoked but before views are rendered.
+   *
+   * @since  COmanage Registry v3.1.0
+   */
 
   function beforeRender() {
     parent::beforeRender();
-    $client_secret = $this->RcauthSource->getClientSecret($this->RcauthSource->data);
-    if (empty($client_secret) && !empty($this->RcauthSource->data['RcauthSource']["client_secret"])) {
-      // XXX We have a client secret but it has not been hashed. Prompt the user to hit save and then render
-      // XXX without unhashing
-      $client_secret = $this->RcauthSource->data['RcauthSource']["client_secret"];
-      $this->Flash->set(_txt('op.rcauthsource.secret_key_hash'), array('key' => 'information'));
-
-    }
-    $this->set('vv_rcauth_client_secret', $client_secret);
+    $this->set('vv_rcauth_client_secret', $this->RcauthSource->getClientSecret($this->RcauthSource->data));
+    $cfg = $this->RcauthSource->data;
+    $this->RcauthSourceBackend->setConfig($cfg);
+    $this->set('vv_rcauth_backend_scopes', $this->RcauthSourceBackend->getMpOA2Server()->getScopesSupported());
   }
 
   function checkWriteFollowups($reqdata, $curdata = null, $origdata = null) {

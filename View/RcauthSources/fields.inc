@@ -26,6 +26,8 @@
  */
 -->
 <?php
+  print $this->Html->css('/RcauthSource/css/style', array('inline' => false));
+
   // Determine if fields are editable
   $e = false;
   
@@ -119,16 +121,37 @@
     </div>
   </li>
   <li>
-      <div class="field-name">
-          <div class="field-title">
-            <?php print _txt('pl.rcauthsource.issuer'); ?>
-            <span class="required">*</span>
-          </div>
-          <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
+    <div class="field-name">
+        <div class="field-title">
+          <?php print _txt('pl.rcauthsource.issuer'); ?>
+          <span class="required">*</span>
+        </div>
+        <div class="field-desc"><?php print _txt('pl.rcauthsource.issuer.desc'); ?></div>
+    </div>
+    <div class="field-info">
+      <?php print ($e ? $this->Form->input('issuer', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcauthSource']['issuer'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
+    </div>
+  </li>
+  <li class="field-flex">
+    <div class="field-name field-name-flex">
+      <div class="field-title">
+        <?php print _txt('pl.rcauthsource.scopes'); ?>
+        <span class="required">*</span>
       </div>
-      <div class="field-info">
-    <?php print ($e ? $this->Form->input('issuer', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcAuthSource']['issuer'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
-      </div>
+      <div class="field-desc"><?php print _txt('pl.rcauthsource.scopes.desc'); ?></div>
+    </div>
+    <div class="field-info field-info-flex">
+      <?php
+        foreach($vv_rcauth_backend_scopes as $value) {
+          $scopes[$value] = $value;    
+        }
+        print $this->Form->input('scopes', array(
+          'multiple' => 'checkbox',
+          'options' => $scopes,
+          'selected' => explode(',',$rcauth_sources[0]['RcauthSource']['scopes'])
+        ));
+      ?>
+    </div>
   </li>
   <li>
     <div class="field-name">
