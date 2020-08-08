@@ -65,4 +65,5 @@ $cm_rcauth_source_texts['en_US'] = array(
 
   // Plugin operations
   'op.rcauthsource.add_update'           => 'RCAuth Certificate Saved',
+  'op.rcauthsource.secret_key_hash'      => 'Press Save to enforce Secret Key Hashing in Database. Otherwise Certificate will fail.',
 );

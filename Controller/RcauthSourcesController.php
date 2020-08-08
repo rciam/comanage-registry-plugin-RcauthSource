@@ -55,7 +55,15 @@ class RcauthSourcesController extends SOISController {
 
   function beforeRender() {
     parent::beforeRender();
-    $this->set('vv_rcauth_client_secret', $this->RcauthSource->getClientSecret($this->RcauthSource->data));
+    $client_secret = $this->RcauthSource->getClientSecret($this->RcauthSource->data);
+    if (empty($client_secret) && !empty($this->RcauthSource->data['RcauthSource']["client_secret"])) {
+      // XXX We have a client secret but it has not been hashed. Prompt the user to hit save and then render
+      // XXX without unhashing
+      $client_secret = $this->RcauthSource->data['RcauthSource']["client_secret"];
+      $this->Flash->set(_txt('op.rcauthsource.secret_key_hash'), array('key' => 'information'));
+
+    }
+    $this->set('vv_rcauth_client_secret', $client_secret);
   }
 
   function checkWriteFollowups($reqdata, $curdata = null, $origdata = null) {

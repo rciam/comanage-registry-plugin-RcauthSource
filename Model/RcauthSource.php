@@ -71,9 +71,9 @@ class RcauthSource extends AppModel {
     $key = Configure::read('Security.salt');
     Configure::write('Security.useOpenSsl', true);
     if(!empty($this->data["RcauthSource"]["client_secret"])) {
+      $client_secret = base64_encode(Security::encrypt($this->data["RcauthSource"]["client_secret"], $key));
       $stored_key = (!is_null($this->id)) ? $this->field('client_secret', ['id' => $this->id]) : '';
-      if($stored_key !== $this->data["RcauthSource"]["client_secret"]) {
-        $client_secret = base64_encode(Security::encrypt($this->data["RcauthSource"]["client_secret"], $key));
+      if($stored_key !== $client_secret) {
         $this->data["RcauthSource"]["client_secret"] = $client_secret;
       }
     }

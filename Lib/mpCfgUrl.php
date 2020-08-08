@@ -1,76 +1,18 @@
 <?php
 App::uses('HttpSocket', 'Network/Http');
-class mpCfgUrl {
-  private static $AUTH_ENDPOINT = 'authorization_endpoint';
-  private static $REGISTER_ENDPOINT = 'registration_endpoint';
-  private static $JWKS_URI = 'jwks_uri';
-  private static $ISSUER = 'issuer';
-  private static $TOKEN_ENDPOINT = 'token_endpoint';
-  private static $USERINFO_ENDPOINT = 'userinfo_endpoint';
-  private static $TOKEN_ENDPOINT_AM_SUP = 'token_endpoint_auth_methods_supported';
-  private static $SUBJECT_TYP_SUP = 'subject_types_supported';
-  private static $SCOPES_SUP = 'scopes_supported';
-  private static $RESPONSE_TYP_SUP = 'response_types_supported';
-  private static $CLAIMS_SUP = 'claims_supported';
-  private static $ID_TOKEN_SIG_ALG_VAL_SUP = 'id_token_signing_alg_values_supported';
+App::uses('enum.php', 'RcauthSource.Lib');
 
-  private $authorizationEndpoint;
-  private $registrationEndpoint;
-  private $jwksUri;
-  private $issuer;
-  private $tokenEndpoint;
-  private $userinfoEndpoint;
-  private $tokenEndpointAuthMethodsSupported = array();
-  private $subjectTypesSupported = array();
-  private $scopesSupported = array();
-  private $responseTypesSupported = array();
-  private $claimsSupported = array();
-  private $idTokenSigningAlgValuesSupported = array();
-  private $httpClient = null;
+class mpCfgUrl {
+  private $__httpClient = null;
+  private $__openIdCfgJson = null;
 
   // parse json and fill the variables
   function __construct($url){
     // if the url variable has not been defined then do nothing
-    if(isset($url) and $url != "") {
+    if(!empty($url)) {
       $response = $this->httpClient()->get($url, array(), array());
       if($response->isOk()) {
-        $openIdCfgJson = json_decode($response);
-        $this->authorizationEndpoint = $openIdCfgJson->{self::$AUTH_ENDPOINT};
-        $this->registrationEndpoint = $openIdCfgJson->{self::$REGISTER_ENDPOINT};
-        $this->jwksUri = $openIdCfgJson->{self::$JWKS_URI};
-        $this->issuer = $openIdCfgJson->{self::$ISSUER};
-        $this->tokenEndpoint = $openIdCfgJson->{self::$TOKEN_ENDPOINT};
-        $this->userinfoEndpoint = $openIdCfgJson->{self::$USERINFO_ENDPOINT};
-
-        // token_endpoint_auth_methods_supported
-        foreach ($openIdCfgJson->{self::$TOKEN_ENDPOINT_AM_SUP} as $data) {
-          $this->tokenEndpointAuthMethodsSupported[] = $data;
-        }
-
-        // subject_types_supported
-        foreach ($openIdCfgJson->{self::$SUBJECT_TYP_SUP} as $data) {
-          $this->subjectTypesSupported[] = $data;
-        }
-
-        // scopes_supported
-        foreach ($openIdCfgJson->{self::$SCOPES_SUP} as $data) {
-          $this->scopesSupported[] = $data;
-        }
-
-        // response_types_supported
-        foreach ($openIdCfgJson->{self::$RESPONSE_TYP_SUP} as $data) {
-          $this->responseTypesSupported[] = $data;
-        }
-
-        // claims_supported
-        foreach ($openIdCfgJson->{self::$CLAIMS_SUP} as $data) {
-          $this->claimsSupported[] = $data;
-        }
-
-        // id_token_signing_alg_values_supported
-        foreach ($openIdCfgJson->{self::$ID_TOKEN_SIG_ALG_VAL_SUP} as $data) {
-          $this->idTokenSigningAlgValuesSupported[] = $data;
-        }
+        $this->__openIdCfgJson = json_decode($response, true);
       }
       else {
         $error = json_decode($response->body);
@@ -81,13 +23,16 @@ class mpCfgUrl {
     }
   }
 
+  /**
+   * @return HttpSocket
+   */
   public function httpClient () {
-    if($this->httpClient === null) {
-      $this->httpClient = new HttpSocket(array(
+    if($this->__httpClient === null) {
+      $this->__httpClient = new HttpSocket(array(
         'timeout' => 3
      ));
     }
-    return $this->httpClient;
+    return $this->__httpClient;
   }
 
   /**
@@ -95,7 +40,7 @@ class mpCfgUrl {
    */
   public function getAuthorizationEndpoint()
   {
-    return $this->authorizationEndpoint;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::AUTH_ENDPOINT];
   }
 
   /**
@@ -103,7 +48,7 @@ class mpCfgUrl {
    */
   public function getRegistrationEndpoint()
   {
-    return $this->registrationEndpoint;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::REGISTER_ENDPOINT];
   }
 
   /**
@@ -111,7 +56,7 @@ class mpCfgUrl {
    */
   public function getJwksUri()
   {
-    return $this->jwksUri;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::JWKS_URI];
   }
 
   /**
@@ -119,7 +64,7 @@ class mpCfgUrl {
    */
   public function getScopesSupported()
   {
-    return $this->scopesSupported;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::SCOPES_SUP];
   }
 
   /**
@@ -127,7 +72,7 @@ class mpCfgUrl {
    */
   public function getIssuer()
   {
-    return $this->issuer;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::ISSUER];
   }
 
   /**
@@ -135,7 +80,7 @@ class mpCfgUrl {
    */
   public function getTokenEndpoint()
   {
-    return $this->tokenEndpoint;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::TOKEN_ENDPOINT];
   }
 
   /**
@@ -143,7 +88,7 @@ class mpCfgUrl {
    */
   public function getUserinfoEndpoint()
   {
-    return $this->userinfoEndpoint;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::USERINFO_ENDPOINT];
   }
 
   /**
@@ -151,7 +96,7 @@ class mpCfgUrl {
    */
   public function getTokenEndpointAuthMethodsSupported()
   {
-    return $this->tokenEndpointAuthMethodsSupported;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::TOKEN_ENDPOINT_AM_SUP];
   }
 
   /**
@@ -159,7 +104,7 @@ class mpCfgUrl {
    */
   public function getSubjectTypesSupported()
   {
-    return $this->subjectTypesSupported;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::SUBJECT_TYP_SUP];
   }
 
   /**
@@ -167,7 +112,7 @@ class mpCfgUrl {
    */
   public function getResponseTypesSupported()
   {
-    return $this->responseTypesSupported;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::RESPONSE_TYP_SUP];
   }
 
   /**
@@ -175,7 +120,7 @@ class mpCfgUrl {
    */
   public function getClaimsSupported()
   {
-    return $this->claimsSupported;
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::CLAIMS_SUP];
   }
 
   /**
@@ -183,21 +128,6 @@ class mpCfgUrl {
    */
   public function getIdTokenSigningAlgValuesSupported()
   {
-    return $this->idTokenSigningAlgValuesSupported;
-  }
-
-  public function printOpenIdCfg(){
-    print $this->getAuthorizationEndpoint()."\n";
-    print $this->getRegistrationEndpoint()."\n";
-    print $this->getJwksUri()."\n";
-    print $this->getIssuer()."\n";
-    print $this->getTokenEndpoint()."\n";
-    print $this->getUserinfoEndpoint()."\n";
-    print_r($this->getTokenEndpointAuthMethodsSupported());
-    print_r($this->getSubjectTypesSupported());
-    print_r($this->getScopesSupported());
-    print_r($this->getResponseTypesSupported());
-    print_r($this->getClaimsSupported());
-    print_r($this->getIdTokenSigningAlgValuesSupported());
+    return $this->__openIdCfgJson[RcauthSourceMPEndpointEnum::ID_TOKEN_SIG_ALG_VAL_SUP];
   }
 }
