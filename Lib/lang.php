@@ -39,6 +39,7 @@ $cm_rcauth_source_texts['en_US'] = array(
 
   // Error messages
   'er.rcauthsource.code'               => 'Error exchanging code for RCAUTH and access token: %1$s',
+  'er.rcauthsource.mpCfgUrl'           => 'Error trying to receive information from MasterPortal OP configuration URL',
   'er.rcauthsource.search'             => 'Search request returned %1$s',
   'er.rcauthsource.token.api'          => 'Access token not found in API response',
   'er.rcauthsource.token.none'         => 'Access token not configured (try resaving configuration)',
