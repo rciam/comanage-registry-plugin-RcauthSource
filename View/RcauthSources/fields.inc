@@ -132,24 +132,19 @@
       <?php print ($e ? $this->Form->input('issuer', array('size' => 50, 'maxlength'=>'400')) : filter_var($rcauth_sources[0]['RcauthSource']['issuer'],FILTER_SANITIZE_SPECIAL_CHARS)); ?>
     </div>
   </li>
-  <li class="field-flex">
-    <div class="field-name field-name-flex">
+  <li>
+    <div class="field-name">
       <div class="field-title">
         <?php print _txt('pl.rcauthsource.scopes'); ?>
         <span class="required">*</span>
       </div>
       <div class="field-desc"><?php print _txt('pl.rcauthsource.scopes.desc'); ?></div>
     </div>
-    <div class="field-info field-info-flex">
+    <div class="field-info">
       <?php
-        foreach($vv_rcauth_backend_scopes as $value) {
-          $scopes[$value] = $value;    
-        }
-        print $this->Form->input('scopes', array(
-          'multiple' => 'checkbox',
-          'options' => $scopes,
-          'selected' => explode(',',$rcauth_sources[0]['RcauthSource']['scopes'])
-        ));
+        $value = empty($rcauth_sources[0]['RcauthSource']['scopes']) ? ''
+                    : filter_var(str_replace(","," ",$rcauth_sources[0]['RcauthSource']['scopes']), FILTER_SANITIZE_SPECIAL_CHARS);
+        print $this->Form->input('scopes', array('placeholder'=>'email edu.uiuc.ncsa.myproxy.getcert openid','size' => 50, 'maxlength'=>'400', 'value' => $value));
       ?>
     </div>
   </li>

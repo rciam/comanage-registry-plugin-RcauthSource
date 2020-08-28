@@ -61,10 +61,7 @@ class RcauthSourcesController extends SOISController {
   function beforeRender() {
     parent::beforeRender();
     $this->set('vv_rcauth_client_secret', $this->RcauthSource->getClientSecret($this->RcauthSource->data));
-    $cfg = $this->RcauthSource->data;
-    $this->RcauthSourceBackend->setConfig($cfg);
-    $this->set('vv_rcauth_backend_scopes', $this->RcauthSourceBackend->getMpOA2Server()->getScopesSupported());
-  }
+    }
 
   function checkWriteFollowups($reqdata, $curdata = null, $origdata = null) {
     $this->Flash->set(_txt('rs.updated-a3', array(_txt('ct.rcauth_sources.2'))), array('key' => 'success'));

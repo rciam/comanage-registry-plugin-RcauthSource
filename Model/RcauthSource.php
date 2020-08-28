@@ -73,7 +73,7 @@ class RcauthSource extends AppModel {
   
   public function beforeValidate($options = array()) {
     if(!empty($this->data["RcauthSource"]["scopes"])) {
-      $this->data["RcauthSource"]["scopes"] = implode(",",$this->data["RcauthSource"]["scopes"]);
+      $this->data["RcauthSource"]["scopes"] = str_replace(" ",",",trim($this->data["RcauthSource"]["scopes"]));
     }
     //Encrypt key here in case validation failed to have the encrypted key and beforeRender function work properly
     $key = Configure::read('Security.salt');
@@ -94,7 +94,7 @@ class RcauthSource extends AppModel {
    * @return false|string
    * @throws InvalidArgumentException
    */
-  
+
   public function getClientSecret($rcauthSourceData) {
     if(empty($rcauthSourceData["RcauthSource"]["client_secret"])) {
       throw new InvalidArgumentException(_txt('er.notfound',

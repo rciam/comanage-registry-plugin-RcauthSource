@@ -61,7 +61,7 @@ $cm_rcauth_source_texts['en_US'] = array(
   'pl.rcauthsource.mp_oa2_server'        => 'MasterPortal OP configuration URL',
   'pl.rcauthsource.mp_oa2_server.desc'   => 'URL of the well known configuration of MasterPortal\'s OP',
   'pl.rcauthsource.scopes'               => 'Scopes',
-  'pl.rcauthsource.scopes.desc'          => 'Scopes needed for obtaining proxy certificates',
+  'pl.rcauthsource.scopes.desc'          => 'Scopes needed for obtaining proxy certificates (one space seperated list)',
   'pl.rcauthsource.provision'            => 'Provision',
   'pl.rcauthsource.provision.desc'       => 'Enable or Disable Provisioning at the end of the Enrollment Flow',
 
