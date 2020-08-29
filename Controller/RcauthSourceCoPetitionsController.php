@@ -133,6 +133,9 @@ class RcauthSourceCoPetitionsController extends CoPetitionsController
         ));
       }
     } catch (Exception $e) {
+      if(!empty($e->getMessage())) {
+        $this->log(__METHOD__ . "::error message => " . $e->getMessage(), LOG_ERROR);
+      }
       // This might happen if (eg) the Rcauth is already in use
       $this->Flash->set(_txt('er.rcauthsource.add_update'), array('key' => 'error'));
       return false;
