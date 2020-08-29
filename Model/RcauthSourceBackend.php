@@ -215,11 +215,7 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
     // Construct the callback route
     $redirectUri = Router::url($this->callbackUrl(), array('full' => true));
     // Construct the scope
-    $scope = "";
-    foreach ($this->getMpOA2Server()->getScopesSupported() as $key => $value) {
-      $scope .= $value . " ";
-    }
-    $scope = trim($scope);
+    $scope = str_replace(',', ' ', $this->pluginCfg['RcauthSource']['scopes']);
     // Construct the url
     $url = $this->getMpOA2Server()->getAuthorizationEndpoint() . "?";
     $url .= "response_type=code";

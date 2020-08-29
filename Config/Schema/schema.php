@@ -52,6 +52,7 @@ class RcauthSourceSchema extends CakeSchema {
     'issuer' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 256),
     'idphint' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 256),
     'mp_oa2_server' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 256),
+    'scopes' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 256),
     'indexes' => array(
       'PRIMARY' => array('unique' => true, 'column' => 'id'),
       'cm_rcauth_sources_i1' => array('unique' => true, 'column' => 'org_identity_source_id')

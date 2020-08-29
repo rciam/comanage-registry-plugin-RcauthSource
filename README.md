@@ -10,7 +10,8 @@ This is an [Organizational Identity Source COmanage Plugin](https://spaces.at.in
 4. Run `Console/cake schema create --file schema.php --path /path/to/comanage/local/Plugin/RcauthSource/Config/Schema`
 
 ## Schema update
-Not yet implemented
+1. Run `cd /path/to/comanage/app`
+2. Run `Console/cake RcauthSource.upgradeVersion xyz` (e.g To upgrade to version 1.1.0, 'xyz' will take the value 110)
  
 ## Configuration
 

@@ -53,6 +53,11 @@ class RcauthSource extends AppModel {
         'rule' => array('validateInput'),
       ),
     ),
+    'scopes' => array(
+      'rule' => 'notBlank',
+      'required' => true,
+      'allowEmpty' => false
+    ),
     'provision' => array(
       'rule' => 'notBlank',
       'required' => false,
@@ -61,13 +66,16 @@ class RcauthSource extends AppModel {
   );
 
   /**
-   * Actions to take before a save operation is executed.
+   * Actions to take before a validate operation is executed.
    *
-   * @return Boolean
-   * @since  COmanage Registry v3.1.0
-   */
-  public function beforeSave($options = array()) {
-    $this->log(__METHOD__ . '::@', LOG_DEBUG);
+   * @since  COmanage Registry v0.9.1
+  */
+  
+  public function beforeValidate($options = array()) {
+    if(!empty($this->data["RcauthSource"]["scopes"])) {
+      $this->data["RcauthSource"]["scopes"] = str_replace(" ",",",trim($this->data["RcauthSource"]["scopes"]));
+    }
+    //Encrypt key here in case validation failed to have the encrypted key and beforeRender function work properly
     $key = Configure::read('Security.salt');
     Configure::write('Security.useOpenSsl', true);
     if(!empty($this->data["RcauthSource"]["client_secret"])) {
@@ -77,7 +85,6 @@ class RcauthSource extends AppModel {
         $this->data["RcauthSource"]["client_secret"] = $client_secret;
       }
     }
-    return true;
   }
   
   /**
@@ -87,6 +94,7 @@ class RcauthSource extends AppModel {
    * @return false|string
    * @throws InvalidArgumentException
    */
+
   public function getClientSecret($rcauthSourceData) {
     if(empty($rcauthSourceData["RcauthSource"]["client_secret"])) {
       throw new InvalidArgumentException(_txt('er.notfound',
