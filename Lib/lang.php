@@ -64,6 +64,9 @@ $cm_rcauth_source_texts['en_US'] = array(
   'pl.rcauthsource.scopes.desc'          => 'Scopes needed for obtaining proxy certificates (one space seperated list)',
   'pl.rcauthsource.provision'            => 'Provision',
   'pl.rcauthsource.provision.desc'       => 'Enable or Disable Provisioning at the end of the Enrollment Flow',
+  'pl.rcauthsource.assurance_req'        => 'Level of Assurance(LoA)',
+  'pl.rcauthsource.assurance_level'      => 'Assurance Value',
+  'pl.rcauthsource.assurance_level_type' => 'Assurance Value Type',
 
   // Plugin operations
   'op.rcauthsource.add_update'           => 'RCAuth Certificate Saved',

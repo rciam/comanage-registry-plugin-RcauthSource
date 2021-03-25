@@ -45,6 +45,8 @@
     <field name="mp_oa2_server" type="C" size="256" />
     <field name="scopes" type="C" size="256" />
     <field name="provision" type="I"/>
+    <field name="assurance_level" type="C" size="256" />
+    <field name="assurance_level_type" type="C" size="16" />
     <field name="created" type="T" />
     <field name="modified" type="T" />
     <index name="rcauth_sources_i1">
