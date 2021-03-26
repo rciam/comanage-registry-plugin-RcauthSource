@@ -29,7 +29,9 @@ class UpgradeVersionShell extends AppShell
     public function _ug110()
     {
         $query = "alter table cm_rcauth_sources alter column client_secret type varchar(1024) using client_secret::varchar(1024);";
-        $query .= "alter table cm_rcauth_sources add scopes varchar(256)";
+        $query .= "alter table cm_rcauth_sources ADD COLUMN scopes varchar(256)";
+        $query .= "alter table cm_rcauth_sources ADD COLUMN assurance_level varchar(256)";
+        $query .= "alter table cm_rcauth_sources ADD COLUMN assurance_level_type varchar(16)";
         $dbc = $this->RcauthSource->getDataSource();
         $dbc->begin();
         try {

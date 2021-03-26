@@ -62,6 +62,16 @@ class RcauthSource extends AppModel {
       'rule' => 'notBlank',
       'required' => false,
       'allowEmpty' => true
+    ),
+    'assurance_level' => array(
+      'rule' => 'notBlank',
+      'required' => true,
+      'allowEmpty' => true
+    ),
+    'assurance_level_type' => array(
+      'rule' => 'notBlank',
+      'required' => true,
+      'allowEmpty' => true
     )
   );
 

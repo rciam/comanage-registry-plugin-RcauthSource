@@ -15,3 +15,17 @@ class RcauthSourceMPEndpointEnum
  public const CLAIMS_SUP = 'claims_supported';
  public const ID_TOKEN_SIG_ALG_VAL_SUP = 'id_token_signing_alg_values_supported';
 }
+
+class RcauthSourceAssuranceComponentEnum
+{
+  const IdentifierUniqueness  = 'ID';
+  const IdentityAssurance     = 'IAP';
+  const AttributeAssurance    = 'ATP';
+  const AssuranceProfile      = 'profile';
+  const type = array(
+    'ID'  => 'Identifier Uniqueness',
+    'IAP' => 'Identity Assurance',
+    'ATP' => 'Attribute Assurance',
+    'profile' => 'Profile Assurance',
+  );
+}

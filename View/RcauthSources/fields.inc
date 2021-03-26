@@ -162,6 +162,68 @@
       ?>
     </div>
   </li>
+  <li>
+    <div class="field-name">
+      <div class="field-title">
+        <?php print _txt('pl.rcauthsource.assurance_req'); ?>
+        <span class="required">*</span>
+      </div>
+    </div>
+    <ul class="field-children">
+      <li>
+        <div class="field-name">
+          <div class="field-title">
+            <?php print _txt('pl.rcauthsource.assurance_level'); ?>
+          </div>
+        </div>
+        <div class="field-info">
+          <?php
+          if($e) {
+            $default = empty($rcauth_sources[0]["RcauthSource"]['assurance_level'])
+              ? ''
+              : filter_var($rcauth_sources[0]["RcauthSource"]['assurance_level'],FILTER_SANITIZE_SPECIAL_CHARS);
+            print $this->Form->input('assurance_level', array('default' => $default));
+            if($this->Form->isFieldError('assurance_level')) {
+              print $this->Form->error('assurance_level');
+            }
+          } else {
+            print filter_var($rcauth_sources[0]["RcauthSource"]['assurance_level'],FILTER_SANITIZE_SPECIAL_CHARS);
+          }
+          ?>
+        </div>
+      </li>
+      <li>
+        <div class="field-name">
+          <div class="field-title">
+            <?php print _txt('pl.rcauthsource.assurance_level_type'); ?>
+          </div>
+        </div>
+        <div class="field-info">
+          <?php
+          $attrs = array();
+          $attrs['value'] = (!empty($rcauth_sources[0]["RcauthSource"]['assurance_level_type'])
+            ? $rcauth_sources[0]["RcauthSource"]['assurance_level_type']
+            : RcauthSourceAssuranceComponentEnum::AssuranceProfile);
+          $attrs['empty'] = true;
+
+          if ($e) {
+            print $this->Form->select(
+              'assurance_level_type',
+              RcauthSourceAssuranceComponentEnum::type,
+              $attrs
+            );
+
+            if ($this->Form->isFieldError('assurance_level_type')) {
+              print $this->Form->error('assurance_level_type');
+            }
+          } else {
+            print RcauthSourceAssuranceComponentEnum::type[$rcauth_sources[0]["RcauthSource"]['assurance_level_type']];
+          }
+          ?>
+        </div>
+      </li>
+    </ul>
+  </li>
 
   <?php if($e): ?>
     <li class="fields-submit">

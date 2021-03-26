@@ -282,6 +282,10 @@ class RcauthSourceBackend extends OrgIdentitySourceBackend {
       }
     }
 
+    // Level of Assurance
+    $orgdata['Assurance'][0]['value'] = (string)$this->pluginCfg['assurance_level'];
+    $orgdata['Assurance'][0]['type'] = (string)$this->pluginCfg['assurance_level_type'];
+
     // More attributes to add in the future
     return $orgdata;
   }
