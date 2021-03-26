@@ -34,6 +34,10 @@ After the installation, you have to configure the plugin before using it.
      - The DN of the certificate issuer
    - Provisioning
      - Enable or disable provisioning for this plugin
+   - Scopes
+     - Single space separated list of scopes to request from MasterPortal
+   - Assurance
+     - Assurance value and type of the RCauth Certificate
 4. Navicate to Configuration > [Pipelines](https://spaces.at.internet2.edu/display/COmanage/Registry+Pipelines) > Add Pipeline
    - Status: Active
    - Match Strategy: Do not Match
@@ -44,7 +48,7 @@ This table matches the Plugin version with the supported COmanage version.
 
 | Plugin |  COmanage |    PHP    |
 |:------:|:---------:|:---------:|
-| v1.0.0 | v3.1.x    | &gt;=v5.6 |
+| v1.x   | v3.1.x    | &gt;=v5.6 |
 
 ## License
 
