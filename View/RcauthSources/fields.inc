@@ -26,8 +26,6 @@
  */
 -->
 <?php
-  print $this->Html->css('/RcauthSource/css/style', array('inline' => false));
-
   // Determine if fields are editable
   $e = false;
   
